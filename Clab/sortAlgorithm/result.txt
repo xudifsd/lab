@@ -1,0 +1,23 @@
+#this file is created by compareMain.c
+#this compare the speed of bubbleSort selectSort shellSort insertSort quickSort
+#times is represent the times of loop in each sort algorithm
+
+
+#this time n=100
+
+bubbleSort
+times is 9901
+
+selectSort
+times is 5051
+
+insertSort
+times is 2104
+
+quickSort
+times is 718
+
+shellSort
+times is 358
+
+结论：对于几乎排好序的数据insertSort最好，而shellSort是对insertSort的改进版，对于一般小的数据这5个排序算法都行，但对于大数据quickSort和shellSort有较好表现。

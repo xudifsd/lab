@@ -1,0 +1,15 @@
+# Date : 2010-12-22
+
+objects = getword.o list.o wordcount.o
+
+wc : $(objects)
+	cc -o wc $(objects)
+
+getword.o : 
+
+list.o : list.h
+
+wordcount.o : list.h
+
+clean :
+	-rm wc $(objects)

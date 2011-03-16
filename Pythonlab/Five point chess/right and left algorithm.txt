@@ -1,0 +1,183 @@
+#left slanting
+    if a2<4:
+        if a1<4:
+            if a1>a2:
+                for i in range(a1-a2,a1+1):
+                    store[1]=pool[i][i-a1+a2]
+                    store[2]=pool[i+1][i-a1+a2+1]
+                    store[3]=pool[i+2][i-a1+a2+2]
+                    store[4]=pool[i+3][i-a1+a2+3]
+                    store[5]=pool[i+4][i-a1+a2+4]
+                    Calculate()
+            elif a2>a1:
+                for i in range(a2-a1,a2+1):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+            else:
+                for i in range(0,a1+1):
+                    store[1]=pool[i][i]
+                    store[2]=pool[i+1][i+1]
+                    store[3]=pool[i+2][i+2]
+                    store[4]=pool[i+3][i+3]
+                    store[5]=pool[i+4][i+4]
+                    Calculate()
+        elif a1>10:
+            if a1==a2+10:
+                store[1]=pool[10][0]
+                store[2]=pool[11][1]
+                store[3]=pool[12][2]
+                store[4]=pool[13][3]
+                store[5]=pool[14][4]
+                Calculate()
+            elif a1<a2+10:
+                for i in range(a1-a2,11):
+                    store[1]=pool[i][i-a1+a2]
+                    store[2]=pool[i+1][i-a1+a2+1]
+                    store[3]=pool[i+2][i-a1+a2+2]
+                    store[4]=pool[i+3][i-a1+a2+3]
+                    store[5]=pool[i+4][i-a1+a2+4]
+                    Calculate()
+        else:
+            for i in range(a1-a2,a1+1):
+                store[1]=pool[i][i-a1+a2]
+                store[2]=pool[i+1][i-a1+a2+1]
+                store[3]=pool[i+2][i-a1+a2+2]
+                store[4]=pool[i+3][i-a1+a2+3]
+                store[5]=pool[i+4][i-a1+a2+4]
+                Calculate()
+    elif a2>10:
+        if a1<4:
+            if a2-10<=a1:
+                for i in range(a2-a1,11):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+        elif a1>10:
+            if a2>a1:
+                for i in range(a2-a1+8,11):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+            elif a1==a2:
+                for i in range(a1-4,11):
+                    store[1]=pool[i][i]
+                    store[2]=pool[i+1][i+1]
+                    store[3]=pool[i+2][i+2]
+                    store[4]=pool[i+3][i+3]
+                    store[5]=pool[i+4][i+4]
+                    Calculate()
+            else:
+                for i in range(a1-4,11):
+                    store[1]=pool[i][i-a1+a2]
+                    store[2]=pool[i+1][i-a1+a2+1]
+                    store[3]=pool[i+2][i-a1+a2+2]
+                    store[4]=pool[i+3][i-a1+a2+3]
+                    store[5]=pool[i+4][i-a1+a2+4]
+                    Calculate()
+        else:#a2>10 and 3<a1<11
+            for i in range(a2-4,11):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+    else:#a<=a2<=10
+        if a1<4:
+            for i in range(0,a1+1):
+                store[1]=pool[i][i+a2-a1]
+                store[2]=pool[i+1][i+a2-a1+1]
+                store[3]=pool[i+2][i+a2-a1+2]
+                store[4]=pool[i+3][i+a2-a1+3]
+                store[5]=pool[i+4][i+a2-a1+4]
+                Calculate()
+        elif a1>10:#4<=a2<=10
+            for i in range(a1-4,11):
+                store[1]=pool[i][i-a1+a2]
+                store[2]=pool[i+1][i-a1+a2+1]
+                store[3]=pool[i+2][i-a1+a2+2]
+                store[4]=pool[i+3][i-a1+a2+3]
+                store[5]=pool[i+4][i-a1+a2+4]
+                Calculate()
+        else:
+            for i in range(a1-4,a1+1):
+                store[1]=pool[i][i-a1+a2]
+                store[2]=pool[i+1][i-a1+a2+1]
+                store[3]=pool[i+2][i-a1+a2+2]
+                store[4]=pool[i+3][i-a1+a2+3]
+                store[5]=pool[i+4][i-a1+a2+4]
+                Calculate()
+#right slanting
+    if 4<=a2<=10:
+        if 4<=a1<=10:
+            for i in range(a2-4,a2+1):#1
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()
+    if a2<4:
+        if 4<=a1+a2<=14:
+            for i in range(0,a2+1):#2
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()
+    if a1>10:
+        if 15<=a1+a2<=24:
+            for i in range(a1,15):#3
+                store[1]=pool[i][a1+a2-i]
+                store[2]=pool[i-1][a1+a2-i+1]
+                store[3]=pool[i-2][a1+a2-i+2]
+                store[4]=pool[i-3][a1+a2-i+3]
+                store[5]=pool[i-4][a1+a2-i+4]
+                Calculate()
+    if a2>10:
+        if 15<=a1+a2<=24:
+            for i in range(a2-4,11):#4
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()
+    if a1<4:
+        if 4<=a1+a2<=14:
+            for i in range(4,a1+5):#5
+                store[1]=pool[i][a1+a2-i]
+                store[2]=pool[i-1][a1+a2-i+1]
+                store[3]=pool[i-2][a1+a2-i+2]
+                store[4]=pool[i-3][a1+a2-i+3]
+                store[5]=pool[i-4][a1+a2-i+4]
+                Calculate()
+    if a1<4 and a2<4:
+        if 4<=a1+a2<=6:
+            for i in range(0,a1+a2-3):#6
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()
+    if a1>10 and a2>10:
+        if 22<=a1+a2<=24:
+            for i in range(a1+a2-14,11):#7
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()

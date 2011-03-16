@@ -1,0 +1,395 @@
+#!/usr/bin/python
+#Author:xudifsd; Time:2009/11/18; License:GPLv3; Version:2.0 Alpha
+#Define function
+import cPickle as cp
+import sys
+def Judge():
+    global a1,a2,wrong
+    if a1<0 or a1>=15 or a2<0 or a2>=15:
+            print'Wrong input!'
+            wrong=1
+    elif pool[a1][a2]!=0:
+            print'This position has been occupanted!'
+            wrong=2
+def Pass():
+#across calculate
+    global a1,a2,pool,store
+    if a2<4:
+        for i in range(0,a2+1):
+            store[1]=pool[a1][i]
+            store[2]=pool[a1][i+1]
+            store[3]=pool[a1][i+2]
+            store[4]=pool[a1][i+3]
+            store[5]=pool[a1][i+4]
+            Calculate()
+    elif a2>10:
+        for i in range(a2-4,11):
+            store[1]=pool[a1][i]
+            store[2]=pool[a1][i+1]
+            store[3]=pool[a1][i+2]
+            store[4]=pool[a1][i+3]
+            store[5]=pool[a1][i+4]
+            Calculate()
+    else:
+        for i in range(a2-4,a2+1):
+            store[1]=pool[a1][i]
+            store[2]=pool[a1][i+1]
+            store[3]=pool[a1][i+2]
+            store[4]=pool[a1][i+3]
+            store[5]=pool[a1][i+4]
+            Calculate()
+#vertical calculate
+    if a1<4:
+        for i in range(0,a1+1):
+            store[1]=pool[i][a2]
+            store[2]=pool[i+1][a2]
+            store[3]=pool[i+2][a2]
+            store[4]=pool[i+3][a2]
+            store[5]=pool[i+4][a2]
+            Calculate()
+    elif a1>10:
+        for i in range(a1-4,11):
+            store[1]=pool[i][a2]
+            store[2]=pool[i+1][a2]
+            store[3]=pool[i+2][a2]
+            store[4]=pool[i+3][a2]
+            store[5]=pool[i+4][a2]
+            Calculate()
+    else:
+        for i in range(a1-4,a1+1):
+            store[1]=pool[i][a2]
+            store[2]=pool[i+1][a2]
+            store[3]=pool[i+2][a2]
+            store[4]=pool[i+3][a2]
+            store[5]=pool[i+4][a2]
+            Calculate()
+#left slanting
+    if a2<4:
+        if a1<4:
+            if a1>a2:
+                for i in range(a1-a2,a1+1):
+                    store[1]=pool[i][i-a1+a2]
+                    store[2]=pool[i+1][i-a1+a2+1]
+                    store[3]=pool[i+2][i-a1+a2+2]
+                    store[4]=pool[i+3][i-a1+a2+3]
+                    store[5]=pool[i+4][i-a1+a2+4]
+                    Calculate()
+            elif a2>a1:
+                for i in range(a2-a1,a2+1):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+            else:
+                for i in range(0,a1+1):
+                    store[1]=pool[i][i]
+                    store[2]=pool[i+1][i+1]
+                    store[3]=pool[i+2][i+2]
+                    store[4]=pool[i+3][i+3]
+                    store[5]=pool[i+4][i+4]
+                    Calculate()
+        elif a1>10:
+            if a1==a2+10:
+                store[1]=pool[10][0]
+                store[2]=pool[11][1]
+                store[3]=pool[12][2]
+                store[4]=pool[13][3]
+                store[5]=pool[14][4]
+                Calculate()
+            elif a1<a2+10:
+                for i in range(a1-a2,11):
+                    store[1]=pool[i][i-a1+a2]
+                    store[2]=pool[i+1][i-a1+a2+1]
+                    store[3]=pool[i+2][i-a1+a2+2]
+                    store[4]=pool[i+3][i-a1+a2+3]
+                    store[5]=pool[i+4][i-a1+a2+4]
+                    Calculate()
+        else:
+            for i in range(a1-a2,a1+1):
+                store[1]=pool[i][i-a1+a2]
+                store[2]=pool[i+1][i-a1+a2+1]
+                store[3]=pool[i+2][i-a1+a2+2]
+                store[4]=pool[i+3][i-a1+a2+3]
+                store[5]=pool[i+4][i-a1+a2+4]
+                Calculate()
+    elif a2>10:
+        if a1<4:
+            if a2-10<=a1:
+                for i in range(a2-a1,11):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+        elif a1>10:
+            if a2>a1:
+                for i in range(a2-a1+8,11):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+            elif a1==a2:
+                for i in range(a1-4,11):
+                    store[1]=pool[i][i]
+                    store[2]=pool[i+1][i+1]
+                    store[3]=pool[i+2][i+2]
+                    store[4]=pool[i+3][i+3]
+                    store[5]=pool[i+4][i+4]
+                    Calculate()
+            else:
+                for i in range(a1-4,11):
+                    store[1]=pool[i][i-a1+a2]
+                    store[2]=pool[i+1][i-a1+a2+1]
+                    store[3]=pool[i+2][i-a1+a2+2]
+                    store[4]=pool[i+3][i-a1+a2+3]
+                    store[5]=pool[i+4][i-a1+a2+4]
+                    Calculate()
+        else:#a2>10 and 3<a1<11
+            for i in range(a2-4,11):
+                    store[1]=pool[i-a2+a1][i]
+                    store[2]=pool[i-a2+a1+1][i+1]
+                    store[3]=pool[i-a2+a1+2][i+2]
+                    store[4]=pool[i-a2+a1+3][i+3]
+                    store[5]=pool[i-a2+a1+4][i+4]
+                    Calculate()
+    else:#a<=a2<=10
+        if a1<4:
+            for i in range(0,a1+1):
+                store[1]=pool[i][i+a2-a1]
+                store[2]=pool[i+1][i+a2-a1+1]
+                store[3]=pool[i+2][i+a2-a1+2]
+                store[4]=pool[i+3][i+a2-a1+3]
+                store[5]=pool[i+4][i+a2-a1+4]
+                Calculate()
+        elif a1>10:#4<=a2<=10
+            for i in range(a1-4,11):
+                store[1]=pool[i][i-a1+a2]
+                store[2]=pool[i+1][i-a1+a2+1]
+                store[3]=pool[i+2][i-a1+a2+2]
+                store[4]=pool[i+3][i-a1+a2+3]
+                store[5]=pool[i+4][i-a1+a2+4]
+                Calculate()
+        else:
+            for i in range(a1-4,a1+1):
+                store[1]=pool[i][i-a1+a2]
+                store[2]=pool[i+1][i-a1+a2+1]
+                store[3]=pool[i+2][i-a1+a2+2]
+                store[4]=pool[i+3][i-a1+a2+3]
+                store[5]=pool[i+4][i-a1+a2+4]
+                Calculate()
+#right slanting
+    if 4<=a2<=10:
+        if 4<=a1<=10:
+            for i in range(a2-4,a2+1):#1
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()
+    if a2<4:
+        if 4<=a1+a2<=14:
+            if a1>3:
+                for i in range(0,a2+1):#2
+                    store[1]=pool[a1+a2-i][i]
+                    store[2]=pool[a1+a2-i-1][i+1]
+                    store[3]=pool[a1+a2-i-2][i+2]
+                    store[4]=pool[a1+a2-i-3][i+3]
+                    store[5]=pool[a1+a2-i-4][i+4]
+                    Calculate()
+    if a1>10:
+        if 15<=a1+a2<=24:
+            if a2<11:
+                for i in range(a1,15):#3
+                    store[1]=pool[i][a1+a2-i]
+                    store[2]=pool[i-1][a1+a2-i+1]
+                    store[3]=pool[i-2][a1+a2-i+2]
+                    store[4]=pool[i-3][a1+a2-i+3]
+                    store[5]=pool[i-4][a1+a2-i+4]
+                    Calculate()
+    if a2>10:
+        if 15<=a1+a2<=24:
+            if a1<11:
+                for i in range(a2-4,11):#4
+                    store[1]=pool[a1+a2-i][i]
+                    store[2]=pool[a1+a2-i-1][i+1]
+                    store[3]=pool[a1+a2-i-2][i+2]
+                    store[4]=pool[a1+a2-i-3][i+3]
+                    store[5]=pool[a1+a2-i-4][i+4]
+                    Calculate()
+    if a1<4:
+        if 4<=a1+a2<=14:
+            if a2>3:
+                for i in range(4,a1+5):#5
+                    store[1]=pool[i][a1+a2-i]
+                    store[2]=pool[i-1][a1+a2-i+1]
+                    store[3]=pool[i-2][a1+a2-i+2]
+                    store[4]=pool[i-3][a1+a2-i+3]
+                    store[5]=pool[i-4][a1+a2-i+4]
+                    Calculate()
+    if a1<4 and a2<4:
+        if 4<=a1+a2<=6:
+            for i in range(0,a1+a2-3):#6
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()
+    if a1>10 and a2>10:
+        if 22<=a1+a2<=24:
+            for i in range(a1+a2-14,11):#7
+                store[1]=pool[a1+a2-i][i]
+                store[2]=pool[a1+a2-i-1][i+1]
+                store[3]=pool[a1+a2-i-2][i+2]
+                store[4]=pool[a1+a2-i-3][i+3]
+                store[5]=pool[a1+a2-i-4][i+4]
+                Calculate()
+def Calculate():
+    global store,winer
+    if store[1]==store[2]==store[3]==store[4]==store[5]==1:
+        winer=1
+    elif store[1]==store[2]==store[3]==store[4]==store[5]==2:
+        winer=2
+def GUI():
+    print'  1 |2 |3 |4 |5 |6 |7 |8 |9 |10|11|12|13|14|15'
+    print'1_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[0][0],symbol[0][1],symbol[0][2],symbol[0][3],symbol[0][4],symbol[0][5],symbol[0][6],symbol[0][7],symbol[0][8],symbol[0][9],symbol[0][10],symbol[0][11],symbol[0][12],symbol[0][13],symbol[0][14])
+    print'2_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[1][0],symbol[1][1],symbol[1][2],symbol[1][3],symbol[1][4],symbol[1][5],symbol[1][6],symbol[1][7],symbol[1][8],symbol[1][9],symbol[1][10],symbol[1][11],symbol[1][12],symbol[1][13],symbol[1][14])
+    print'3_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[2][0],symbol[2][1],symbol[2][2],symbol[2][3],symbol[2][4],symbol[2][5],symbol[2][6],symbol[2][7],symbol[2][8],symbol[2][9],symbol[2][10],symbol[2][11],symbol[2][12],symbol[2][13],symbol[2][14])
+    print'4_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[3][0],symbol[3][1],symbol[3][2],symbol[3][3],symbol[3][4],symbol[3][5],symbol[3][6],symbol[3][7],symbol[3][8],symbol[3][9],symbol[3][10],symbol[3][11],symbol[3][12],symbol[3][13],symbol[3][14])
+    print'5_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[4][0],symbol[4][1],symbol[4][2],symbol[4][3],symbol[4][4],symbol[4][5],symbol[4][6],symbol[4][7],symbol[4][8],symbol[4][9],symbol[4][10],symbol[4][11],symbol[4][12],symbol[4][13],symbol[4][14])
+    print'6_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[5][0],symbol[5][1],symbol[5][2],symbol[5][3],symbol[5][4],symbol[5][5],symbol[5][6],symbol[5][7],symbol[5][8],symbol[5][9],symbol[5][10],symbol[5][11],symbol[5][12],symbol[5][13],symbol[5][14])
+    print'7_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[6][0],symbol[6][1],symbol[6][2],symbol[6][3],symbol[6][4],symbol[6][5],symbol[6][6],symbol[6][7],symbol[6][8],symbol[6][9],symbol[6][10],symbol[6][11],symbol[6][12],symbol[6][13],symbol[6][14])
+    print'8_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[7][0],symbol[7][1],symbol[7][2],symbol[7][3],symbol[7][4],symbol[7][5],symbol[7][6],symbol[7][7],symbol[7][8],symbol[7][9],symbol[7][10],symbol[7][11],symbol[7][12],symbol[7][13],symbol[7][14])
+    print'9_%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[8][0],symbol[8][1],symbol[8][2],symbol[8][3],symbol[8][4],symbol[8][5],symbol[8][6],symbol[8][7],symbol[8][8],symbol[8][9],symbol[8][10],symbol[8][11],symbol[8][12],symbol[8][13],symbol[8][14])
+    print'10%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[9][0],symbol[9][1],symbol[9][2],symbol[9][3],symbol[9][4],symbol[9][5],symbol[9][6],symbol[9][7],symbol[9][8],symbol[9][9],symbol[9][10],symbol[9][11],symbol[9][12],symbol[9][13],symbol[9][14])
+    print'11%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[10][0],symbol[10][1],symbol[10][2],symbol[10][3],symbol[10][4],symbol[10][5],symbol[10][6],symbol[10][7],symbol[10][8],symbol[10][9],symbol[10][10],symbol[10][11],symbol[10][12],symbol[10][13],symbol[10][14])
+    print'12%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[11][0],symbol[11][1],symbol[11][2],symbol[11][3],symbol[11][4],symbol[11][5],symbol[11][6],symbol[11][7],symbol[11][8],symbol[11][9],symbol[11][10],symbol[11][11],symbol[11][12],symbol[11][13],symbol[11][14])
+    print'13%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[12][0],symbol[12][1],symbol[12][2],symbol[12][3],symbol[12][4],symbol[12][5],symbol[12][6],symbol[12][7],symbol[12][8],symbol[12][9],symbol[12][10],symbol[12][11],symbol[12][12],symbol[12][13],symbol[12][14])
+    print'14%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[13][0],symbol[13][1],symbol[13][2],symbol[13][3],symbol[13][4],symbol[13][5],symbol[13][6],symbol[13][7],symbol[13][8],symbol[13][9],symbol[13][10],symbol[13][11],symbol[13][12],symbol[13][13],symbol[13][14])
+    print'15%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s_|%s'%(symbol[14][0],symbol[14][1],symbol[14][2],symbol[14][3],symbol[14][4],symbol[14][5],symbol[14][6],symbol[14][7],symbol[14][8],symbol[14][9],symbol[14][10],symbol[14][11],symbol[14][12],symbol[14][13],symbol[14][14])
+def Console():
+    while True:
+        try:
+            x=raw_input("Now you are in the console,input 'wq' for save game and quit,input 'q' for quit whitout save game,input 'r' for return game:\n")
+        except:
+            print"Wrong input,you can only input 'wq','q'and'r'!"
+        else:
+            if x in ['wq','WQ']:
+                f=file('save.txt','w')
+                cp.dump(pool,f)
+                cp.dump(symbol,f)
+                cp.dump(player,f)
+                sys.exit()
+            elif x in ['q','Q']:
+                sys.exit()
+            elif x in ['r','R']:
+                break
+            else:
+                print"Wrong input! You can only input 'wq','q'and'r'!"
+#Main
+print'This is the Five Points Chess!'
+print"Version:2.0 Alpha This program'license is GPL,you can visit http://www.gnu.org for more information."
+print'First player is represent by "*",and second player is represent by "#"'
+print'Author is xudifsd,you can contract with him by E-mail address:"xudifsd@gmail.com"'
+#clean game pool
+a=[];b=[];pool=[];symbol=[]
+for times in range(1,16):
+    a.append(0)
+for times in range(1,16):
+    pool.append(a[:])
+for times in range(1,16):
+    b.append('_')
+for times in range(1,16):
+    symbol.append(b[:])
+#inital
+wrong=0
+winer=0
+store=[0,0,0,0,0,0]
+player=1
+#test and load save
+try:
+    f=file('save.txt')
+except IOError:
+    save=0
+else:
+    while True:
+        try:
+            c=raw_input('There seem to have a save file,do you want to load them?(y/n)\n')
+        except:
+            print"Wrong input,you can only input 'y'and'n'!"
+        else:
+            if c in ['y','Y']:
+                pool=cp.load(f)
+                symbol=cp.load(f)
+                player=cp.load(f)
+                break
+            elif c in ['n','N']:
+                break
+            else:
+                print"You can only input 'y' and 'n'!"
+                continue
+#main
+while True:
+    GUI()
+    while player==1:
+        wrong=0
+        while True:
+            try:
+                a1=int(raw_input('First Player,First Coordinat:\n'))
+                a2=int(raw_input('First Player,Second Coordinat:\n'))
+            except ValueError:
+                Console()
+                continue
+            except:
+                print'Wrong input!'
+            else:
+                break
+        a1=a1-1;a2=a2-1
+        Judge()
+        if wrong!=0:
+            continue
+        pool[a1][a2]=1
+        symbol[a1][a2]='*'
+        Pass()
+        if winer!=0:
+            break
+        GUI()
+        player=2
+    if winer!=0:
+        break
+    while player==2:
+        wrong=0
+        while True:
+            try:
+                a1=int(raw_input('Scond Player,First Coordinat:\n'))
+                a2=int(raw_input('Scond Player,Second Coordinat:\n'))
+            except ValueError:
+                Console()
+                continue
+            except:
+                print'Wrong input!'
+            else:
+                break
+        a1=a1-1;a2=a2-1
+        Judge()
+        if wrong!=0:
+            continue
+        pool[a1][a2]=2
+        symbol[a1][a2]='#'
+        Pass()
+        if winer!=0:
+            break
+        GUI()
+        player=1
+    if winer!=0:
+        break
+if winer==1 :
+    print'Winer is First Player!'
+else:
+    print'Winer is Second Player!'

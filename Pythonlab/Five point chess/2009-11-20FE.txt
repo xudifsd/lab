@@ -1,0 +1,108 @@
+#!/usr/bin/python
+#Author:xudifsd; Time:2009/11/18; License:GPLv3; Version:1.0
+#Define function
+def Judge():
+    if a1<=0 or a1>=16 or a2<=0 or a2>=16:
+            print'Wrong input!'
+            wrong=1
+    elif pool[a1][a2] !=0:
+            print'This position has been occupanted!'
+            wrong=2
+def Pass():
+#across calculate
+    if a2<5:
+        for i in range(1,a2+1):
+            pool[a1][i]=store[1]
+            pool[a1][i+1]=store[2]
+            pool[a1][i+2]=store[3]
+            pool[a1][i+3]=store[4]
+            pool[a1][i+4]=store[5]
+            Calculate()
+    elif a2>11:
+        for i in range(a2-4,12):
+            pool[a1][i]=store[1]
+            pool[a1][i+1]=store[2]
+            pool[a1][i+2]=store[3]
+            pool[a1][i+3]=store[4]
+            pool[a1][i+4]=store[5]
+            Calculate()
+    else:
+        for i in range(a2-4,a2+1):
+            pool[a1][i]=store[1]
+            pool[a1][i+1]=store[2]
+            pool[a1][i+2]=store[3]
+            pool[a1][i+3]=store[4]
+            pool[a1][i+4]=store[5]
+            Calculate()
+#vertical calculate
+    if a1<5:
+        for i in range(1,a1+1):
+            pool[i][a2]=store[1]
+            pool[i+1][a2]=store[2]
+            pool[i+2][a2]=store[3]
+            pool[i+3][a2]=store[4]
+            pool[i+4][a2]=store[5]
+            Calculate()
+    elif a1>11:
+        for i in range(a1-4,12):
+            pool[i][a2]=store[1]
+            pool[i+1][a2]=store[2]
+            pool[i+2][a2]=store[3]
+            pool[i+3][a2]=store[4]
+            pool[i+4][a2]=store[5]
+            Calculate()
+    else:
+        for i in range(a1-4,a1+1):
+            pool[i][a2]=store[1]
+            pool[i+1][a2]=store[2]
+            pool[i+2][a2]=store[3]
+            pool[i+3][a2]=store[4]
+            pool[i+4][a2]=store[5]
+            Calculate()
+def Calculate():
+    if store[1]==store[2]==store[3]==store[4]==store[5]==1:
+        winer=1
+    elif store[1]==store[2]==store[3]==store[4]==store[5]==2:
+        winer=2
+#Main
+print'This is the Five Points Chess!'
+print"Version:1.0 This program'license is GPL,you can visit http://www.gnu.org for more information."
+#clean game pool
+a=[];pool=[]
+for times in range(1,16):
+    a.append(0)
+for times in range(1,16):
+    pool.append(a)
+print pool              #Test
+#inital
+wrong=0
+winer=0
+store=[0,0,0,0,0,0]
+#main
+while True:
+    a1=int(raw_input('First Player,First Coordinat:\n'))
+    a2=int(raw_input('First Player,Second Coordinat:\n'))
+    Judge()
+    if wrong!=0:
+        continue
+    print a1,a2         #Test
+    pool[a1][a2]=1
+    Pass()
+    print pool          #Test
+    if winer!=0:
+        break
+    a1=int(raw_input('Scond Player,First Coordinat:\n'))
+    a2=int(raw_input('Scond Player,Second Coordinat:\n'))
+    print a1,a2         #Test
+    Judge()
+    if wrong!=0:
+        continue
+    print a1,a2         #Test
+    pool[a1][a2]=2
+    Pass()
+    if winer!=0:
+        break
+if winer==1 :
+    print'Winer is First Player!'
+else:
+    print'Winer is Second Player!'
