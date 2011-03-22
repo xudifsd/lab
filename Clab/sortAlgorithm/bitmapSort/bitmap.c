@@ -3,7 +3,7 @@
 #include <string.h>
 #include "bitmap.h"
 
-#define MAX 6553621
+#define MAX 1048576*2
 
 static char repository[MAX];	//bigest number can store is MAX*CHAR_BIT-1
 
