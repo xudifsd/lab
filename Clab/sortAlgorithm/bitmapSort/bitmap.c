@@ -3,24 +3,11 @@
 #include <string.h>
 #include "bitmap.h"
 
-#define ONE (1 << 1)
-#define TWO (1 << 2)
-#define THREE (1 << 3)
-#define FOUR (1 << 4)
-#define FIVE (1 << 5)
-#define SIX (1 << 6)
-#define SEVEN (1 << 7)
-#define EIGHT (1 << 8)
-
-#define MAX 1048576*2
+#define MAX (1048576*2)	//bigest number can stored in bitmap
 
 static char repository[MAX];	//bigest number can store is MAX*CHAR_BIT-1
 
-static char *byteOffset = repository;
-
-static unsigned short bitOffset = 0;
-
-extern void initRepository(){
+extern void initRepository(){	//since bitmap need accurate bit stat, so it needs to init before use add
 	memset(&repository, 0, sizeof(repository));
 }
 
@@ -36,71 +23,23 @@ extern int add(int number){	//0 for success
 }
 
 extern int getint(void){	//return EOF indicate it has all returned
+	static char *byteOffset = repository;
+
+	static unsigned short bitOffset = 0;
+
 	for (;;){
-		if (bitOffset == 8){
+		if (bitOffset == CHAR_BIT){
 			byteOffset++;
 			bitOffset = 0;
 		}
 		if (byteOffset == (repository + MAX))
 			return EOF;
 
-		switch (bitOffset){
-			case 0 :
-				if (!(*byteOffset & ONE)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
-			case 1 :
-				if (!(*byteOffset & ONE)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
-			case 2 :
-				if (!(*byteOffset & TWO)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
-			case 3 :
-				if (!(*byteOffset & THREE)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
-			case 4 :
-				if (!(*byteOffset & FOUR)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
-			case 5 :
-				if (!(*byteOffset & FIVE)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
-			case 6 :
-				if (!(*byteOffset & SIX)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
-			case 7 :
-				if (!(*byteOffset & SEVEN)){
-					bitOffset++;
-					continue;
-				}
-				else
-					return (((byteOffset - repository) * 8) + (bitOffset++));
+		if (!(*byteOffset & (1 << bitOffset))){	//no number in current bit
+			bitOffset++;
+			continue;
 		}
+		else	//has number
+			return (((byteOffset - repository) * CHAR_BIT) + (bitOffset++));
 	}
 }
