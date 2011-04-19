@@ -10,12 +10,12 @@ void main()
     struct toparr *i;	//used for print result
     char word[MAX];
     int r;/*test weather getword() return EOF.*/
-    int memoryenough=1;/*if memoryenough==0,memory is not enough.*/
+    int memoryenough=1; /*if memoryenough==0,memory is not enough.*/
 	start=(double)clock();
     root=creat();
     while((r=getword(word))!=EOF)
     {
-    memoryenough=insert(root,word);
+		memoryenough=insert(root,word);
         if (memoryenough==0)
             break;
         }
