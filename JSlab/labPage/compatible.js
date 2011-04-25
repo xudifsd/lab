@@ -11,6 +11,18 @@ compatible.isie = function(){
 	else if (compatible.browser.indexOf('microsoft internet explorer') >= 0)
 		return true;
 }();
+compatible.addevent = function(node, eventname, eventfunction){
+	if ((!node || !eventname || !eventfunction) && compatible.debug){
+		alert('compatible.addevent:\nnode or eventname or eventfunction not assigned!');
+		return;
+	}
+	if (compatible.isie){
+		node.attachEvent(eventname, eventfunction);
+	}
+	else{
+		node.addEventListener(eventname, eventfunction, false);
+	}
+};
 compatible.checkeventfunctionliteral = function(min, max, textareaname, tipareaname, disabledTargetname){
 	//this function use closure to create a non argument for setAttribute
 	if (!inputcheck && compatible.debug){
@@ -37,12 +49,11 @@ compatible.addcheckevent = function(nodename, min, max, textareaname, tipareanam
 		eventfunctionliteral = compatible.checkeventfunctionliteral(min, max, textareaname, tipareaname, disabledTargetname);
 		if (compatible.isie){
 			eventname = 'onpropertychange';
-			node.attachEvent(eventname, eventfunctionliteral);
 		}
 		else{
 			eventname = 'input';
-			node.addEventListener(eventname, eventfunctionliteral, false);
 		}
+		compatible.addevent(node, eventname, eventfunctionliteral);
 	}
 };
 compatible.cleartiparea = function(nodename){
