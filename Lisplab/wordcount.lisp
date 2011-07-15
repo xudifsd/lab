@@ -1,6 +1,6 @@
 ;;; This is the first version of wordcount in lisp, because of limit of recursion in clisp is 7000+,
-;;; this program can't count file line amount exceed 1000. This program will read file in *filename*, you can
-;;; use this program like "time clisp wordcount.lisp 2>/dev/null |grep -v "^;" | sort -k1,1nr -k2|head -n 10"
+;;; this program can't count file line amount exceed 1000.You can use this program like 
+;;; "time cat part.txt | clisp wordcount.lisp 2>/dev/null |grep -v "^;" | sort -k1,1nr -k2|head -n 10"
 
 (defun new-node(string count left right)
 	`(,string ,count ,left . ,right))
@@ -37,8 +37,9 @@
 			head
 			(insert-with-list (insert-with-stream head stream) (cl-ppcre:all-matches-as-strings "\\w+" line)))))
 
-(setf *filename* "part.txt")
+(compile 'insert-with-stream)
+(compile 'insert)
+(compile 'insert-with-list)
+(compile 'print-all)
 
-(print-all (with-open-file (stream *filename* :direction :input)
-	(insert-with-stream nil stream)))
-
+(print-all (insert-with-stream nil *standard-input*))
