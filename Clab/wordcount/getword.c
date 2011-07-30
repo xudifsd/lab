@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 char getword(char *space){
 	char c;
 	int i=0;
@@ -12,5 +13,5 @@ char getword(char *space){
 		i++;
 	}
 	space[i]='\0';
-	return '1';
+	return 1;
 }
