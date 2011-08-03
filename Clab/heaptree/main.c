@@ -22,19 +22,28 @@ static int minest(){	/*find minest in top*/
 	return mini;
 }
 
-static void abstract(const char *word, const int count){
+static void abstract(const struct node *cur){
 	/*abstract top*/
 	static int times = 0;
 	if (times < ARR_SIZE){	/*fill it up*/
-		top[times].word = word;
-		top[times].count = count;
+		top[times].word = cur->word;
+		top[times].count = cur->count;
 		times++;
 	} else{
 		int min = minest();
-		if (top[min].count < count){
-			top[min].word = word;
-			top[min].count = count;
+		if (top[min].count < cur->count){
+			top[min].word = cur->word;
+			top[min].count = cur->count;
 		}
+	}
+}
+
+static void todot(const struct node *cur){
+	if (cur->left != NULL){
+		fprintf(stderr, "\t\"%s\\n%d\" -> \"%s\\n%d\"[headport=n, tailport=sw]\n", cur->word, cur->count, cur->left->word, cur->left->count);
+	}
+	if (cur->right != NULL){
+		fprintf(stderr, "\t\"%s\\n%d\" -> \"%s\\n%d\"[headport=n, tailport=se]\n", cur->word, cur->count, cur->right->word, cur->right->count);
 	}
 }
 
@@ -45,7 +54,7 @@ static int marrowcmp(const void *a, const void *b){
 }
 
 static void print(const char *word, const int count){
-	printf("debug:%-15s %d\n", word, count);
+	//printf("debug:%-15s %d\n", word, count);
 }
 
 int main(int argc, char *argv[]){
@@ -65,7 +74,12 @@ int main(int argc, char *argv[]){
 	}
 	printf("There are %d words.\n",root->sum);
 	finsih=(double)clock();
-	fprintf(stderr, "Run time is %.2f ms\n",(finsih-start)/1000);
-	fprintf(stderr, "depth is %d\n", traverse(root->head, NULL));
+	fprintf(stdout, "Run time is %.2f ms\n",(finsih-start)/1000);
+	fprintf(stdout, "depth is %d\n", traverse(root->head, NULL));
+	/*following line is code for generate dot file*/
+	fprintf(stderr, "digraph heaptree{\n");
+	traverse(root->head, todot);
+	fprintf(stderr, "}\n");
+	/*above line is code for generate dot file*/
 	return 0;
 }

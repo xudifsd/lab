@@ -20,7 +20,7 @@ struct marrow{
 
 extern struct root * init_root();
 extern struct node * init_node(char *);
-extern int traverse(struct node *, void (*)(const char *, const int));
+extern int traverse(struct node *, void (*)(const struct node *));
 extern int height(struct node *);
 extern struct node *insert(struct node *, char *);
 #endif /*HEAPTREE_H*/
