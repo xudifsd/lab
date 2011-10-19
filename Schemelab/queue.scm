@@ -4,7 +4,7 @@
 			(and (eq? (car body) '()) (eq? (cdr body) '())))
 		(define (only-one-element?)
 			(and (not (empty?)) (eq? (cdar body) '())))
-		(define (insert! new)
+		(define (push! new)
 			(let ((new-cons (cons new '())))
 				(if (empty?)
 					((lambda ()
@@ -13,7 +13,7 @@
 					(let ((last (cdr body)))
 						(set-cdr! last new-cons)
 						(set-cdr! body new-cons)))))
-		(define (delete!)
+		(define (pop!)
 			(cond
 				((empty?)
 					'())
@@ -29,10 +29,10 @@
 		(define (dispacher sym oprand)
 			(cond
 				((eq? sym 'empty?) (empty?))
-				((eq? sym 'insert!) (insert! oprand))
-				((eq? sym 'delete!) (delete!))))
+				((eq? sym 'push!) (push! oprand))
+				((eq? sym 'pop!) (pop!))))
 		dispacher))
 
 (define (empty? queue) (queue 'empty? 0))
-(define (insert! queue oprand) (queue 'insert! oprand))
-(define (delete! queue) (queue 'delete! 0)
+(define (push! queue oprand) (queue 'push! oprand))
+(define (pop! queue) (queue 'pop! 0))
