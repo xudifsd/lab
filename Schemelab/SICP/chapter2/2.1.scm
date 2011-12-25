@@ -1,0 +1,6 @@
+(define (make-rat n d)
+ (let ((g (gcd n d)))
+  (if (or (and (positive? n) (positive? d))
+	      (and (negative? n) (negative? d)))
+   (cons (abs (/ n g)) (abs (/ d g)))
+   (cons (- (abs (/ n g))) (abs (/ d g))))))
