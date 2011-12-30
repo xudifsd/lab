@@ -12,8 +12,8 @@
   (car case))
  (define (next-case case)
   (cdr case))
- (define (test-success)
-  (display "unit-test passed")
+ (define (report-finished)
+  (display "unit-test finished")
   (newline))
  (define (report-failure case)
   (display "unit-test fail at: ")
@@ -21,7 +21,7 @@
   (newline))
 
  (if (empty-case? case)
-  (test-success)
+  (report-finished)
   (if (apply pro (first-case case))
    (unit-test pro (next-case case))
    (begin
@@ -35,7 +35,7 @@
 (define (init-case . cases)
  (define (iter cases acc)
   (if (null? cases)
-   empty-case
+   acc
    (iter (cdr cases) (cons (car cases) acc))))
  (iter cases empty-case))
 
