@@ -45,6 +45,22 @@ char *get(char **sp){
 	return *(sp - 1);
 }
 
+char *get_matched_bucket(char *start){
+	char *p;
+	int i = 0;
+	for (p = start + 1; *p; p++){
+		if (*p == '[')
+			i++;
+		else if (*p == ']'){
+			if (i == 0)
+				return p;
+			else
+				i--;
+		}
+	}
+	return NULL;
+}
+
 int main(int argc, char *argv[]){
 	if (argc < 2){
 		error("Usage: %s *.bf", argv[0]);
@@ -95,7 +111,7 @@ int main(int argc, char *argv[]){
 				break;
 			case '[':
 				if (!(*ptr)){
-					p = strchr(p, ']');
+					p = get_matched_bucket(p);
 					if (!p)
 						fatal("missing ]");
 				} else
