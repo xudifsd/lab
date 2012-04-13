@@ -10,7 +10,7 @@
 void fatal(const char *fmt, ...){
 	va_list args;
 	va_start(args, fmt);
-	vprintf(fmt, args);
+	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fputc('\n', stderr);
 	exit(1);
@@ -19,7 +19,7 @@ void fatal(const char *fmt, ...){
 int error(const char *fmt, ...){
 	va_list args;
 	va_start(args, fmt);
-	vprintf(fmt, args);
+	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fputc('\n', stderr);
 	return -1;
