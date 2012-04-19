@@ -16,7 +16,6 @@ class Parser(HTMLParser):
 		'34':'"', 'quot':'"', '215':'*', 'times':'*', '247':'/', 'divide':'/', '8216':'\'', 'lsquo':'\'',\
 			'8217':'\'', 'rsquo':'\'', '8220':'"', 'ldquo':'"', '8221':'"', 'rdquo':'"'}
 	linkReg = re.compile(r'<a href="(.*?)".*?>')
-	contentTagReg = re.compile(r'<p|<strong|<i|<blockquote|<br')
 	titleReg = re.compile(r'<title.*?>')
 	def __init__(self):
 		HTMLParser.__init__(self)
@@ -24,36 +23,44 @@ class Parser(HTMLParser):
 		self.title = ''
 		self.content = ''
 		self.links = {}
+		self.in_content = False
 	def handle_charref(self, name):
 		tag = self.get_starttag_text()
 		title = Parser.titleReg.findall(tag)
 
-		contentTag = Parser.contentTagReg.findall(tag)
-		if len(tag):
+		if self.in_content:
 			if Parser.escapeChar.has_key(name):
 				self.content += Parser.escapeChar[name]
 		elif len(title):
-			self.title += Parser.escapeChar[name]
+			if Parser.escapeChar.has_key(name):
+				self.title += Parser.escapeChar[name]
 	def handle_entityref(self, name):
 		tag = self.get_starttag_text()
 		title = Parser.titleReg.findall(tag)
 
-		contentTag = Parser.contentTagReg.findall(tag)
-		if len(tag):
+		if self.in_content:
 			if Parser.escapeChar.has_key(name):
 				self.content += Parser.escapeChar[name]
 		elif len(title):
-			self.title += Parser.escapeChar[name]
+			if Parser.escapeChar.has_key(name):
+				self.title += Parser.escapeChar[name]
+	def handle_starttag(self, tag, attrs):
+		if tag == 'p':
+			self.in_content = True
+	def handle_endtag(self, tag):
+		if tag == 'p':
+			self.in_content = False
 	def handle_data(self, data):
 		tag = self.get_starttag_text()
 		if tag:
 			links = Parser.linkReg.findall(tag)
 			title = Parser.titleReg.findall(tag)
-			contentTag = Parser.contentTagReg.findall(tag)
+
+			if self.in_content:
+				self.content += data
+
 			if len(links) and not self.links.has_key(links[0]):
 				self.links[data] = links[0]
-			elif len(contentTag):
-				self.content += data
 			elif len(title):
 				self.title += data
 
@@ -87,8 +94,12 @@ class PageFetcher(Thread):
 			url = self.queue.get()
 			page = fetch_url(url)
 			parser = Parser()
-			parser.feed(page)
-
+			try:
+				parser.feed(page.decode('gbk'))
+			except:
+				self.queue.task_done()
+				print 'encount exception when fetching ' + url
+				continue
 			title = extract_title(parser.title)
 
 			for i in parser.links.values():
@@ -97,7 +108,7 @@ class PageFetcher(Thread):
 					mp3_url = i
 			mp3Content = fetch_url(mp3_url)
 
-			save(parser.content, title + '.txt')
+			save(parser.content.replace('.', '\n'), title + '.txt')
 			save(mp3Content, title + '.mp3')
 			self.queue.task_done()
 
@@ -106,7 +117,12 @@ def fetch_index(index_url):
 	site = 'http://www.hxen.com' #for internal url
 	index = fetch_url(index_url)
 	parser = Parser()
-	parser.feed(index)
+	try:
+		parser.feed(index.decode('gbk'))
+	except:
+		print 'encount exception when fetching ' + url
+		return
+
 	pagesText = parser.links.keys()
 	queue = Queue()
 	for i in pagesText:
