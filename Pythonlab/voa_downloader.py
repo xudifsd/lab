@@ -9,8 +9,6 @@ import re
 
 debug = 0
 
-#FIXME: use self.in_p_tag or something else to handle some HTML like:
-# <p>something in p <a href="foo">bar</a></p>
 class Parser(HTMLParser):
 	escapeChar = {'62':'>', 'gt':'>', '60':'<', 'lt':'<', '160':' ', 'nbsp':' ', '38':'&','amp':'&',\
 		'34':'"', 'quot':'"', '215':'*', 'times':'*', '247':'/', 'divide':'/', '8216':'\'', 'lsquo':'\'',\
@@ -47,9 +45,15 @@ class Parser(HTMLParser):
 	def handle_starttag(self, tag, attrs):
 		if tag == 'p':
 			self.in_content = True
+		if tag == 'div':
+			self.in_content = False
 	def handle_endtag(self, tag):
 		if tag == 'p':
 			self.in_content = False
+	def handle_startendtag(self, tag, attrs):
+		if tag == 'br':
+			if self.in_content and self.content[-1] == '\n':
+				self.content += '\n'
 	def handle_data(self, data):
 		tag = self.get_starttag_text()
 		if tag:
@@ -66,8 +70,12 @@ class Parser(HTMLParser):
 
 def save(content, name):
 	f = open(name, 'w')
-	f.write(content)
-	f.close()
+	try:
+		f.write(content)
+	except UnicodeEncodeError:
+		print "error content is '''%s'''"%content
+	finally:
+		f.close()
 
 def extract_title(page):
 	titleRegex = re.compile(r'.*:([^|]*)[|].*')
@@ -100,7 +108,7 @@ class PageFetcher(Thread):
 				self.queue.task_done()
 				print 'encount exception when fetching ' + url
 				continue
-			title = extract_title(parser.title)
+			title = extract_title(parser.title).strip()
 
 			for i in parser.links.values():
 				rtn = PageFetcher.mp3Regex.findall(i)
@@ -108,7 +116,7 @@ class PageFetcher(Thread):
 					mp3_url = i
 			mp3Content = fetch_url(mp3_url)
 
-			save(parser.content.replace('.', '\n'), title + '.txt')
+			save(parser.content.strip(), title + '.txt')
 			save(mp3Content, title + '.mp3')
 			self.queue.task_done()
 
@@ -137,4 +145,4 @@ def fetch_index(index_url):
 	print "finished downloading"
 
 if __name__ == "__main__":
-	fetch_index("http://www.hxen.com/englishlistening/voaenglish/voastandardenglish/index.html")
+	fetch_index("http://www.hxen.com/englishlistening/voaenglish/voastandardenglish/")
