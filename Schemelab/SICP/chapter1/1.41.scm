@@ -1,9 +1,9 @@
 (define (double f)
- (lambda (x)
-  (f (f x))))
+  (lambda (x)
+    (f (f x))))
 
 (define (inc x)
- (+ x 1))
+  (+ x 1))
 
 (define (answer)
- (((double (double double)) inc) 5))
+  (((double (double double)) inc) 5))

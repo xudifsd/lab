@@ -1,8 +1,8 @@
 (define (make-interval a b)
- (cons a b))
+  (cons a b))
 
 (define (lower-bound a)
- (car a))
+  (car a))
 
 (define (upper-bound a)
- (cdr a))
+  (cdr a))
