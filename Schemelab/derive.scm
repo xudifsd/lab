@@ -5,6 +5,17 @@
      (print "assert failed, condition is " condition)
      (exit 1))))
 
+(define (less? a b)
+  ;; This function is used to sort expression
+  ;; for example: (sort '((* 2 x) 2 x 5 y) less?) --> '(2 5 x y (* 2 x))
+  (cond ((constant? a) #t)
+        ((constant? b) #f)
+        ((variable? a) #t)
+        ((variable? b) #f)
+        ((list? a) #t)
+        ((list? b) #f)
+        (else #t)))
+
 (define (all-argument expression)
   (cddr expression))
 
@@ -54,31 +65,42 @@
 (define (div? expression)
   (is-operator? expression '/))
 
+(define (exp? expression)
+  (is-operator? expression '^))
+
+(define (log? expression)
+  (is-operator? expression 'log))
+
 (define (make-add a b)
   ;; FIXME
   ;; 1. merge it if a, b is both add expression
   ;; 2. sort a and b
-  (cond ((and (number? a) (= a 0)) b)
-        ((and (number? b) (= b 0)) a)
+  (cond ((and (constant? a) (= a 0)) b)
+        ((and (constant? b) (= b 0)) a)
         ((same-variable? a b) (make-mul 2 a))
         ((and (add? a) (add? b)) (append a (all-argument b)))
+        ((and (sub? a) (sub? b)) (append a (all-argument b)))
         ((add? a) (append a (list b)))
         ((add? b) (append b (list a)))
         (else (list '+ a b))))
 
 (define (make-sub a b)
   ;; FIXME optimize it
-  (list '- a b))
+  (cond ((and (constant? a) (= a 0)) b)
+        ((and (constant? b) (= b 0)) a)
+        (else
+          (list '- a b))))
 
 (define (make-mul a b)
   ;; FIXME
   ;; 1. merge it if a, b is any of it is expo expression
   ;; 2. return (^ x 2) if a is x, b is x, instead of (* x x)
   ;; 3. sort a and b
-  (cond ((and (number? a) (= a 1)) b)
-        ((and (number? a) (= a 0)) 0)
-        ((and (number? b) (= b 1)) a)
-        ((and (number? b) (= b 0)) 0)
+  ;; 4. merge (^ x 2) (/ 1 x)
+  (cond ((and (constant? a) (= a 1)) b)
+        ((and (constant? a) (= a 0)) 0)
+        ((and (constant? b) (= b 1)) a)
+        ((and (constant? b) (= b 0)) 0)
         ;; FIXME if a == b return (^ a 2)
         ((and (mul? a) (mul? b)) (append a (all-argument b)))
         ((mul? a) (append a (list b)))
@@ -87,7 +109,29 @@
 
 (define (make-div a b)
   ;; FIXME optimize it
-  (list '/ a b))
+  (cond ((and (constant? b) (= b 1)) a)
+        ((and (constant? b) (= b 0)) (print "dived by 0"))
+        ((and (constant? a) (= a 0)) 0)
+        ((and (constant? a) (= a 1) (div? b))
+         (make-div (rest-argument b) (first-argument b)))
+        (else
+          (list '/ a b))))
+
+(define (make-exp a b)
+  ;; FIXME optimize it
+  (cond ((and (constant? b) (= b 0)) 1)
+        ((and (constant? b) (= b 1)) a)
+	((and (constant? a) (= a 1)) 1)
+	((and (constant? a) (= a 0)) 0)
+        (else
+          (list '^ a b))))
+
+(define (make-log a b)
+  ;; FIXME optimize it
+  (cond ((and (eq? a 'e) (eq? b 'e)) 1)
+        ((and (constant? b) (= b 1)) 0)
+        (else
+          (list 'log a b))))
 
 (define (derive expression variable)
   ;; derive function expression written in lisp, ie
@@ -97,9 +141,19 @@
   ;; 2. sub
   ;; 3. mul
   ;; 4. div
+  ;; 5. exp
+  ;; 6. log
   ;; We preserve keywords: log e pi cos sin tan, so they can't be used as
   ;; variable
+
   (cond
+   ((or
+     (eq? variable 'log)
+     (eq? variable 'e)
+     (eq? variable 'pi)
+     (eq? variable 'cos)
+     (eq? variable 'sin)
+     (eq? variable 'tan)) (print variable " is preserved word"))
    ((constant? expression) 0)
    ((variable? expression)
     (if (same-variable? expression variable) 1 0))
@@ -110,23 +164,53 @@
    ((add? expression)
     (make-add (derive (first-argument expression) variable)
               (derive (rest-argument expression) variable)))
+
    ((sub? expression)
     (make-sub (derive (first-argument expression) variable)
               (derive (sub-rest-argument expression) variable)))
+
    ((mul? expression)
     (make-add
      (make-mul (derive (first-argument expression) variable)
                (rest-argument expression))
      (make-mul (derive (rest-argument expression) variable)
                (first-argument expression))))
+
    ((div? expression)
     (make-div
      (make-sub (make-mul (derive (first-argument expression) variable)
                          (rest-argument expression))
                (make-mul (first-argument expression)
                          (derive (rest-argument expression) variable)))
-     (make-mul (rest-argument expression)
-               (rest-argument expression))));;FIXME we should use exp here instead of mul
+     (make-exp (rest-argument expression) 2)))
+
+   ((exp? expression)
+    (assert '(= (length expression) 3));;make sure it contains only two args
+    (make-mul
+     (make-exp (first-argument expression) (rest-argument expression))
+     (make-add
+      (make-mul (derive (rest-argument expression) variable)
+                (make-log 'e (first-argument expression)))
+      (make-mul (derive (first-argument expression) variable)
+                (make-div (first-argument expression)
+                          (rest-argument expression))))))
+
+   ((log? expression)
+    (assert '(= (length expression) 3));;make sure it contains only two args
+    (make-div
+     (make-sub
+      (make-mul
+       (make-div 1 (rest-argument expression))
+       (make-mul
+        (derive (rest-argument expression) variable)
+        (make-log 'e (first-argument expression))))
+      (make-mul
+       (make-div 1 (first-argument expression))
+       (make-mul
+        (derive (first-argument expression) variable)
+        (make-log 'e (rest-argument expression)))))
+     (make-exp (make-log 'e (first-argument expression)) 2)))
+
    (else
      (print "Unknow expression: " expression))))
 
