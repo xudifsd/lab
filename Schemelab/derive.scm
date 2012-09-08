@@ -121,8 +121,8 @@
   ;; FIXME optimize it
   (cond ((and (constant? b) (= b 0)) 1)
         ((and (constant? b) (= b 1)) a)
-	((and (constant? a) (= a 1)) 1)
-	((and (constant? a) (= a 0)) 0)
+        ((and (constant? a) (= a 1)) 1)
+        ((and (constant? a) (= a 0)) 0)
         (else
           (list '^ a b))))
 
@@ -145,7 +145,7 @@
   ;; 6. log
   ;; We preserve keywords: log e pi cos sin tan, so they can't be used as
   ;; variable
-
+  
   (cond
    ((or
      (eq? variable 'log)
@@ -164,18 +164,18 @@
    ((add? expression)
     (make-add (derive (first-argument expression) variable)
               (derive (rest-argument expression) variable)))
-
+   
    ((sub? expression)
     (make-sub (derive (first-argument expression) variable)
               (derive (sub-rest-argument expression) variable)))
-
+   
    ((mul? expression)
     (make-add
      (make-mul (derive (first-argument expression) variable)
                (rest-argument expression))
      (make-mul (derive (rest-argument expression) variable)
                (first-argument expression))))
-
+   
    ((div? expression)
     (make-div
      (make-sub (make-mul (derive (first-argument expression) variable)
@@ -183,7 +183,7 @@
                (make-mul (first-argument expression)
                          (derive (rest-argument expression) variable)))
      (make-exp (rest-argument expression) 2)))
-
+   
    ((exp? expression)
     (assert '(= (length expression) 3));;make sure it contains only two args
     (make-mul
@@ -194,7 +194,7 @@
       (make-mul (derive (first-argument expression) variable)
                 (make-div (first-argument expression)
                           (rest-argument expression))))))
-
+   
    ((log? expression)
     (assert '(= (length expression) 3));;make sure it contains only two args
     (make-div
@@ -210,11 +210,11 @@
         (derive (first-argument expression) variable)
         (make-log 'e (rest-argument expression)))))
      (make-exp (make-log 'e (first-argument expression)) 2)))
-
+   
    (else
      (print "Unknow expression: " expression))))
 
-(define (algebre-eval expression)
+(define (algebre-eval expression env)
   ;; eval is evil, we all know it, so we use algebre-eval to eval algebre
   ;; expression, and we can also provide user with much more function, like
   ;; ^(exponent) and (log a b)
@@ -222,4 +222,49 @@
   ;; in global environment
   ;; in summary algebre-eval provide a more safe way to eval algebre
   ;; expression.
-  #f)
+  (define (^ base power)
+    (cond ((= 0 power) 1)
+          ((= 1 power) base)
+          ((= 2 power) (* base base))
+          ((even? power) (^ (^ base (/ power 2)) 2))
+          (else
+            (* base (^ base (- power 1))))))
+  (define (mylog base up)
+    (/ (log up) (log base)))
+  
+  (cond
+   ((constant? expression) expression)
+   ((variable? expression)
+    (cond ((eq? expression 'e) 2.71828182845905)
+          ((eq? expression 'pi) 3.14159265358979)
+          (else
+            (if (list? env)
+              (let ((value (assq expression env)))
+                (if (list? value)
+                  (cadr value)
+                  (begin
+                   (print expression " is not in env list")
+                   (exit 1))))
+              (begin
+               (print env " is not a list")
+               (exit 1))))))
+   ((add? expression)
+    (+ (algebre-eval (first-argument expression) env)
+       (algebre-eval (rest-argument expression) env)))
+   ((sub? expression)
+    (- (algebre-eval (first-argument expression) env)
+       (algebre-eval (sub-rest-argument))))
+   ((mul? expression)
+    (* (algebre-eval (first-argument expression) env)
+       (algebre-eval (rest-argument expression) env)))
+   ((div? expression)
+    (/ (algebre-eval (first-argument expression) env)
+       (algebre-eval (rest-argument expression) env)))
+   ((exp? expression)
+    (assert '(= (length expression) 3))
+    (^ (algebre-eval (first-argument expression) env)
+       (algebre-eval (rest-argument expression) env)))
+   ((log? expression)
+    (assert '(= (length expression) 3))
+    (mylog (algebre-eval (first-argument expression) env)
+           (algebre-eval (rest-argument expression) env)))))
