@@ -86,7 +86,7 @@
 
 (define (make-sub a b)
   ;; FIXME optimize it
-  (cond ((and (constant? a) (= a 0)) b)
+  (cond ((and (constant? a) (= a 0)) (list '- b))
         ((and (constant? b) (= b 0)) a)
         (else
           (list '- a b))))
@@ -192,8 +192,8 @@
       (make-mul (derive (rest-argument expression) variable)
                 (make-log 'e (first-argument expression)))
       (make-mul (derive (first-argument expression) variable)
-                (make-div (first-argument expression)
-                          (rest-argument expression))))))
+                (make-div (rest-argument expression)
+                          (first-argument expression))))))
    
    ((log? expression)
     (assert '(= (length expression) 3));;make sure it contains only two args
@@ -218,8 +218,9 @@
   ;; eval is evil, we all know it, so we use algebre-eval to eval algebre
   ;; expression, and we can also provide user with much more function, like
   ;; ^(exponent) and (log a b)
-  ;; ATTENTION: all the symbol used in expression  must have binded value
-  ;; in global environment
+  ;; ATTENTION: all the symbol used in expression must have associated value
+  ;; in env, for example, if we have x bind to 2, and y bind to 3, env should
+  ;; be '((x 2) (y 3)), if no bind value, just pass '()
   ;; in summary algebre-eval provide a more safe way to eval algebre
   ;; expression.
   (define (^ base power)
@@ -252,8 +253,10 @@
     (+ (algebre-eval (first-argument expression) env)
        (algebre-eval (rest-argument expression) env)))
    ((sub? expression)
-    (- (algebre-eval (first-argument expression) env)
-       (algebre-eval (sub-rest-argument expression) env)))
+    (if (= (length expression) 2) ;;(- 2)
+      (- 0 (algebre-eval (first-argument expression) env))
+      (- (algebre-eval (first-argument expression) env)
+         (algebre-eval (sub-rest-argument expression) env))))
    ((mul? expression)
     (* (algebre-eval (first-argument expression) env)
        (algebre-eval (rest-argument expression) env)))

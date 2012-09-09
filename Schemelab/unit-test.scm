@@ -12,21 +12,26 @@
     (car case))
   (define (next-case case)
     (cdr case))
-  (define (report-finished)
-    (display "unit-test finished")
-    (newline))
+  (define (report-finished failed?)
+    (display "unit-test finished: ")
+    (if failed?
+      (print "test failed")
+      (print "No fail")))
   (define (report-failure case)
-    (display "unit-test fail at: ")
-    (display case)
-    (newline))
+    (print "unit-test fail at: " case))
   
-  (if (empty-case? case)
-    (report-finished)
-    (if (apply pro (first-case case))
-      (unit-test pro (next-case case))
+  (define (iter case failed?)
+    (if (empty-case? case)
+      (report-finished failed?)
       (begin
-       (report-failure (first-case case))
-       (unit-test pro (next-case case))))))
+       (print "testing " (first-case case))
+       (if (apply pro (first-case case))
+         (iter (next-case case) failed?)
+         (begin
+          (report-failure (first-case case))
+          (iter (next-case case) #t))))))
+
+  (iter case #f))
 
 ;; add new case to acc
 (define (add-case case acc)
