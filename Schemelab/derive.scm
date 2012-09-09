@@ -253,7 +253,7 @@
        (algebre-eval (rest-argument expression) env)))
    ((sub? expression)
     (- (algebre-eval (first-argument expression) env)
-       (algebre-eval (sub-rest-argument))))
+       (algebre-eval (sub-rest-argument expression) env)))
    ((mul? expression)
     (* (algebre-eval (first-argument expression) env)
        (algebre-eval (rest-argument expression) env)))

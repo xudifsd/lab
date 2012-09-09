@@ -30,6 +30,7 @@
 
 ;; add new case to acc
 (define (add-case case acc)
+  ;; ATTENTION: this procedure doesn't call set!
   (cons case acc))
 
 (define (init-case . cases)
