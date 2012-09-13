@@ -19,7 +19,7 @@
       (print "No fail")))
   (define (report-failure case)
     (print "unit-test fail at: " case))
-  
+ 
   (define (iter case failed?)
     (if (empty-case? case)
       (report-finished failed?)
@@ -36,7 +36,7 @@
 ;; add new case to acc
 (define (add-case case acc)
   ;; ATTENTION: this procedure doesn't call set!
-  (cons case acc))
+  (append acc (list case)))
 
 (define (init-case . cases)
   (define (iter cases acc)
