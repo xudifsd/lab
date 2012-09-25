@@ -20,13 +20,14 @@ struct node * init_node(char *word){
 static inline int max(int a, int b){
 	return a > b ? a : b;
 }
-int traverse(struct node *cur, void (*fun)(const char *, const int)){	/*traverse reutrn the depth of cur*/
+
+int traverse(struct node *cur, void (*fun)(const struct node *)){	/*traverse reutrn the depth of cur*/
 	if (cur == NULL)
 		return 0;
 	int l,r;
 	l = traverse(cur->left, fun);
 	if (fun)
-		fun(cur->word, cur->count);
+		fun(cur);
 	r = traverse(cur->right, fun);
 	return max(l, r) + 1;
 }
