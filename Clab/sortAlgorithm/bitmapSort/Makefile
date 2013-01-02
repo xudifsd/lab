@@ -1,6 +1,9 @@
 bitsort : bitmap.o main.o
-	cc -o bitsort bitmap.o main.o
-bitsort.o :	bitmap.c bitmap.h
-	cc -c bitmap.c
+	gcc -o bitsort bitmap.o main.o
+bitmap.o : bitmap.c bitmap.h
+	gcc -c bitmap.c
 main.o : main.c bitmap.h
-	cc -c main.c
+	gcc -c main.c
+
+clean:
+	rm *.o bitsort
