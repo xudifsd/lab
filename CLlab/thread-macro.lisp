@@ -3,7 +3,7 @@
                         (if (listp x)
                             x
                           (list x))))
-    (if (null (car form))
+    (if (null form)
         x
       `(->> ,(append (list-if-not (car form))
                      (list x))
