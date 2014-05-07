@@ -18,8 +18,17 @@ static int random_level() {
         inited = 1;
     }
 
-    //shouldn't be rand() % (MAX_LEVEL + 1)
-    return rand() % MAX_LEVEL;
+    int result = 0;
+    int r;
+
+    do {
+        r = rand() % 1;
+        if (!r)
+            break;
+        result++;
+    } while (result < MAX_LEVEL);
+
+    return result;
 }
 
 struct skiplist_node *new_skiplist() {
