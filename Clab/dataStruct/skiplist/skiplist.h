@@ -11,6 +11,7 @@ struct skiplist_node {
 
 extern struct skiplist_node *new_skiplist(void);
 extern void skiplist_insert(struct skiplist_node *header, int value);
+extern void skiplist_delete(struct skiplist_node *header, int value);
 extern int skiplist_contains(struct skiplist_node *header, int value);
 
 #endif /* SKIPLIST_H */

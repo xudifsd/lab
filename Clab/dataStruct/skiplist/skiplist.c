@@ -62,6 +62,37 @@ void skiplist_insert(struct skiplist_node *header, int value) {
     }
 }
 
+void skiplist_delete(struct skiplist_node *header, int value) {
+    static struct skiplist_node *should_update[MAX_LEVEL];
+
+    if (header == NULL)
+        return;
+
+    struct skiplist_node *p = header;
+    int level = header->value; //header use this field to store current level
+    int i;
+
+    for (i = level; i >= 0; i--) {
+        while (p->forward[i] && p->forward[i]->value < value)
+            p = p->forward[i];
+        should_update[i] = p;
+    }
+    p = p->forward[0];
+
+    if (p && p->value == value) {
+        for (i = 0; i < level + 1; i++) {
+            if (should_update[i]->forward[i] != p)
+                break;
+            should_update[i]->forward[i] = p->forward[i];
+        }
+
+        while (level > 0 && header->forward[level] == NULL) {
+            level--;
+            header->value = level;
+        }
+    }
+}
+
 int skiplist_contains(struct skiplist_node *header, int value) {
     int i;
     int level = header->value;
