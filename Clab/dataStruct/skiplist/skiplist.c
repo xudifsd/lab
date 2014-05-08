@@ -26,7 +26,7 @@ static int random_level() {
         if (!r)
             break;
         result++;
-    } while (result < MAX_LEVEL);
+    } while (result < MAX_LEVEL - 1);
 
     return result;
 }
