@@ -148,8 +148,7 @@ public class SwapMap<K, V> extends MapAdapter<K, V> {
 abstract class MapAdapter<K, V> implements Map<K, V> {
 
 	private void panic() {
-		System.err.println("MapAdapter ONLY support put()/get()!!");
-		System.exit(1);
+		throw new RuntimeException("MapAdapter ONLY support put()/get()!!");
 	}
 
 	@Override
