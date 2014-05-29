@@ -38,37 +38,37 @@ public class SwapMap<K, V> extends MapAdapter<K, V> {
 	}
 
 	@Override
-		public V put(K key, V value) {
-			assert !cacheMap.containsKey(key) && !diskMap.containsKey(key);
+	public V put(K key, V value) {
+		assert !cacheMap.containsKey(key) && !diskMap.containsKey(key);
 
-			synchronized (this) {
-				if (live.get() >= lruThreshold) {
-					swapOut();
-				} else {
-					live.incrementAndGet();
-				}
-				LRUPut(key);
-				return cacheMap.put(key, value);
+		synchronized (this) {
+			if (live.get() >= lruThreshold) {
+				swapOut();
+			} else {
+				live.incrementAndGet();
 			}
+			LRUPut(key);
+			return cacheMap.put(key, value);
 		}
+	}
 
 	@SuppressWarnings({ "unchecked" })
-		@Override
-		public V get(Object key) {
-			synchronized (this) {
+	@Override
+	public V get(Object key) {
+		synchronized (this) {
 
-				V value = cacheMap.get(key);
-				if (value != null) { // hit
-					LRUMoveToLast((K) key);
-				} else {
-					if (diskMap.containsKey(key)) {
-						swapOut();
-						value = swapIn((K) key);
-					}
+			V value = cacheMap.get(key);
+			if (value != null) { // hit
+				LRUMoveToLast((K) key);
+			} else {
+				if (diskMap.containsKey(key)) {
+					swapOut();
+					value = swapIn((K) key);
 				}
-				return value;
 			}
+			return value;
 		}
+	}
 
 	private void swapOut() {
 		K k = LRUTake();
@@ -99,17 +99,17 @@ public class SwapMap<K, V> extends MapAdapter<K, V> {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-		private V load(Object key) {
-			String filename = tmpdir + diskMap.get(key);
-			V value = null;
-			try (FileInputStream fis = new FileInputStream(filename);
-					ObjectInputStream input = new ObjectInputStream(fis)) {
-				value = (V) input.readObject();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return value;
+	private V load(Object key) {
+		String filename = tmpdir + diskMap.get(key);
+		V value = null;
+		try (FileInputStream fis = new FileInputStream(filename);
+				ObjectInputStream input = new ObjectInputStream(fis)) {
+			value = (V) input.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return value;
+	}
 
 	private void LRUPut(K key) {
 		try {
@@ -153,60 +153,60 @@ abstract class MapAdapter<K, V> implements Map<K, V> {
 	}
 
 	@Override
-		public int size() {
-			panic();
-			return 0;
-		}
+	public int size() {
+		panic();
+		return 0;
+	}
 
 	@Override
-		public boolean isEmpty() {
-			panic();
-			return false;
-		}
+	public boolean isEmpty() {
+		panic();
+		return false;
+	}
 
 	@Override
-		public boolean containsKey(Object key) {
-			panic();
-			return false;
-		}
+	public boolean containsKey(Object key) {
+		panic();
+		return false;
+	}
 
 	@Override
-		public boolean containsValue(Object value) {
-			panic();
-			return false;
-		}
+	public boolean containsValue(Object value) {
+		panic();
+		return false;
+	}
 
 	@Override
-		public V remove(Object key) {
-			panic();
-			return null;
-		}
+	public V remove(Object key) {
+		panic();
+		return null;
+	}
 
 	@Override
-		public void putAll(Map<? extends K, ? extends V> m) {
-			panic();
-		}
+	public void putAll(Map<? extends K, ? extends V> m) {
+		panic();
+	}
 
 	@Override
-		public void clear() {
-			panic();
-		}
+	public void clear() {
+		panic();
+	}
 
 	@Override
-		public Set<K> keySet() {
-			panic();
-			return null;
-		}
+	public Set<K> keySet() {
+		panic();
+		return null;
+	}
 
 	@Override
-		public Collection<V> values() {
-			panic();
-			return null;
-		}
+	public Collection<V> values() {
+		panic();
+		return null;
+	}
 
 	@Override
-		public Set<Entry<K, V>> entrySet() {
-			panic();
-			return null;
-		}
+	public Set<Entry<K, V>> entrySet() {
+		panic();
+		return null;
+	}
 }
