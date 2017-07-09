@@ -5,3 +5,6 @@
 a.out
 tags
 target/
+*.swp
+*.swo
+.DS_Store

@@ -1,0 +1,7 @@
+[package]
+name = "rust-word-count"
+version = "0.1.0"
+authors = ["Di Xu <xudifsd@gmail.com>"]
+
+[dependencies]
+regex = "0.2"
